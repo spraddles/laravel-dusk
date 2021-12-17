@@ -23,6 +23,7 @@ class ExampleTest extends DuskTestCase
         ];
 
         $coins = [
+            //'BTCUSD' => $this->lastName, // usage: $fake['last_name']
             'BTCUSD',
             'ETHUSD',
             'MATICUSD',
@@ -115,26 +116,73 @@ class ExampleTest extends DuskTestCase
 
 
 
-
-
-        // selectors
-        $chartLink = '@open-invite-modal-button';
-
-
         $this->browse(function (Browser $browser) {
+
+            // CSS selectors
+            $chartsLink = 'div.tv-main > div.tv-header.tv-header__top.js-site-header-container.tv-header--sticky.tv-header--promo.tv-header--animated > div.tv-header__inner > div.tv-header__middle-content > nav > ul > li:nth-child(1) > a';
+            $coinList = '#header-toolbar-symbol-search';
+            $exchangeButton = '[data-name="symbol-search-items-dialog"] .apply-common-tooltip';
+            $exchangeInput = '[data-outside-boundary-for="exchanges-search"] input';
+            $exchangeName = '[data-outside-boundary-for="exchanges-search"] [data-name="exchanges-search"] div[class^="exchangeItemsContainer-"] div[class^="wrap-"]:first-of-type';
+            $coinInput = '[data-dialog-name="Symbol Search"] input';
+            $coinOption = '[data-dialog-name="Symbol Search"] div[class^="listContainer-"]  div[class^="itemRow-"]:nth-of-type(2)';
+            $cookieButton = '[data-role="toast-container"] div[class^="toast-wrapper-"] div[class^="actions-"] button';
+            $expandToolBar = '.layout__area--bottom #footer-chart-panel div[class^="buttons-"] [data-name="toggle-visibility-button"]';
+            $pineScriptTab = '#footer-chart-panel div[class^="tab-"][title="Open Pine Script Editor"]';
+            $pineScriptTextInput = '.layout__area--bottom #bottom-area .tv-script-editor-container .ace_content';
+            $pineScriptTextInputType = '.layout__area--bottom #bottom-area .tv-script-editor-container textarea.ace_text-input';
+
+
+
             $browser
+                ->visit('https://www.tradingview.com/' )
 
-                ->visit('https://www.tradingview.com/', 2000)
+                // $browser->waitFor('.selector');
+
+                ->pause( 1500 )
+                ->press( $chartsLink )
+
+                ->pause( 2500 )
+                ->press( $coinList )
+
+                ->press( $exchangeButton )
+
+                ->pause( 1000 )
+                ->type( $exchangeInput, 'binance' )
+                ->press( $exchangeName )
+
+                ->pause( 1000 )
+                ->clear( $coinInput )
+                ->type( $coinInput, 'XRPUSD' )
+
+                ->pause( 1000 )
+                ->press( $coinOption )
+
+                ->press( $cookieButton )
+
+                ->press( $expandToolBar )
+
+                ->press( $pineScriptTab )
+
+                ->pause( 1000 )
+                ->click( $pineScriptTextInput )
+                ->keys( $pineScriptTextInputType, ['{command}', 'a'], ['{delete}'])
+
+
+
+
+
+
+
+                
+
+
+
+
+
+                ->pause(4000);
+
                 //->assertVisible('.index-page')
-
-                ->press('div.tv-main > div.tv-header.tv-header__top.js-site-header-container.tv-header--sticky.tv-header--promo.tv-header--animated > div.tv-header__inner > div.tv-header__middle-content > nav > ul > li:nth-child(1) > a')
-
-
-
-
-
-                ->pause(5000)
-                ->assertPresent('html');
 
         });
     }
