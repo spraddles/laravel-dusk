@@ -2,4 +2,4 @@
 
 - php artisan serve
 - php artisan dusk:chrome-driver
-- php artisan dusk
+- php artisan dusk tests/Browser/ExampleTest.php
