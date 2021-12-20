@@ -150,13 +150,8 @@ class ExampleTest extends DuskTestCase
 
             // Other variables           
             $strategyFilePath = dirname(__DIR__) . '/files/6.txt';
-            $strategyFileContents = file_get_contents( $strategyFilePath );
-
-
-            //$strategyFileContents = str_replace( '    ', '', file_get_contents( $strategy_file_path ));
-
-
-            
+            $strategyFileContentsRaW = file_get_contents( $strategyFilePath );
+            $strategyFileContentsParsed = preg_replace( "/(?<=\    )(\s\s)/", "PPPPPP", $strategyFileContentsRaW);
 
 
 
@@ -212,7 +207,7 @@ class ExampleTest extends DuskTestCase
                 ->press( $pineScriptTab )
                 ->click( $pineScriptTextInput )
                 ->keys( $pineScriptTextInputType, ['{command}', 'a'], ['{delete}'])
-                ->type( $pineScriptTextInputType, $strategyFileContents )
+                ->type( $pineScriptTextInputType, $strategyFileContentsParsed )
 
                 ->press( $addToChart )
 
