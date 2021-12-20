@@ -119,7 +119,20 @@ class ExampleTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
 
             // CSS selectors
-            $chartsLink = 'div.tv-main > div.tv-header.tv-header__top.js-site-header-container.tv-header--sticky.tv-header--promo.tv-header--animated > div.tv-header__inner > div.tv-header__middle-content > nav > ul > li:nth-child(1) > a';
+
+
+            // login
+            $userArea = '.tv-header__user-menu-button.tv-header__user-menu-button--anonymous.js-header-user-menu-button';
+            $signInLink = 'div[class^="item-"][data-name="header-user-menu-sign-in"]';
+            $emailLink = '.tv-signin-dialog__social.tv-signin-dialog__toggle-email.js-show-email';
+            $focusUser = '.tv-signin-dialog input[id^="email-signin__user-name-input__"]';
+            $focusPassword = '.tv-signin-dialog input[id^="email-signin__password-input__"]';
+            $username = env('TV_USERNAME');
+            $password = env('TV_PASSWORD');
+            $signInButton = '.tv-signin-dialog__footer button[id^="email-signin__submit-button__"]';
+            $chartLink = 'a[data-main-menu-root-track-id="chart"]';
+
+            // coins & exchanges
             $coinList = '#header-toolbar-symbol-search';
             $exchangeButton = '[data-name="symbol-search-items-dialog"] .apply-common-tooltip';
             $exchangeInput = '[data-outside-boundary-for="exchanges-search"] input';
@@ -127,20 +140,54 @@ class ExampleTest extends DuskTestCase
             $coinInput = '[data-dialog-name="Symbol Search"] input';
             $coinOption = '[data-dialog-name="Symbol Search"] div[class^="listContainer-"]  div[class^="itemRow-"]:nth-of-type(2)';
             $cookieButton = '[data-role="toast-container"] div[class^="toast-wrapper-"] div[class^="actions-"] button';
+
+            // pinescript
             $expandToolBar = '.layout__area--bottom #footer-chart-panel div[class^="buttons-"] [data-name="toggle-visibility-button"]';
             $pineScriptTab = '#footer-chart-panel div[class^="tab-"][title="Open Pine Script Editor"]';
             $pineScriptTextInput = '.layout__area--bottom #bottom-area .tv-script-editor-container .ace_content';
             $pineScriptTextInputType = '.layout__area--bottom #bottom-area .tv-script-editor-container textarea.ace_text-input';
+            $addToChart = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget.tv-script-modified div[class^="rightControlsBlock-"] [data-name="add-script-to-chart"]';
+
+            // Other variables           
+            $strategyFilePath = dirname(__DIR__) . '/files/6.txt';
+            $strategyFileContents = file_get_contents( $strategyFilePath );
+
+
+            //$strategyFileContents = str_replace( '    ', '', file_get_contents( $strategy_file_path ));
+
+
+            
+
+
+
+
+            
+
+
+
 
 
 
             $browser
-                ->visit('https://www.tradingview.com/' )
-
-                // $browser->waitFor('.selector');
+                ->visit( 'https://www.tradingview.com/' )
 
                 ->pause( 1500 )
-                ->press( $chartsLink )
+
+                ->click( $userArea )
+                ->pause( 1000 )
+                ->press( $signInLink )
+                ->pause( 1000 )
+                ->press( $emailLink )
+
+                ->press( $focusUser )
+                ->type( $focusUser, $username )
+
+                ->press( $focusPassword )
+                ->type( $focusPassword, $password )
+
+                ->press( $signInButton )
+                ->pause( 1500 )
+                ->press( $chartLink )
 
                 ->pause( 2500 )
                 ->press( $coinList )
@@ -163,10 +210,14 @@ class ExampleTest extends DuskTestCase
                 ->press( $expandToolBar )
 
                 ->press( $pineScriptTab )
-
-                ->pause( 1000 )
                 ->click( $pineScriptTextInput )
                 ->keys( $pineScriptTextInputType, ['{command}', 'a'], ['{delete}'])
+                ->type( $pineScriptTextInputType, $strategyFileContents )
+
+                ->press( $addToChart )
+
+                
+
 
 
 
@@ -177,10 +228,10 @@ class ExampleTest extends DuskTestCase
                 
 
 
+                ->pause(15000);
 
 
-
-                ->pause(4000);
+                
 
                 //->assertVisible('.index-page')
 
