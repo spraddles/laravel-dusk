@@ -118,9 +118,6 @@ class ExampleTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
 
-            // CSS selectors
-
-
             // login
             $userArea = '.tv-header__user-menu-button.tv-header__user-menu-button--anonymous.js-header-user-menu-button';
             $signInLink = 'div[class^="item-"][data-name="header-user-menu-sign-in"]';
@@ -148,13 +145,11 @@ class ExampleTest extends DuskTestCase
             $pineScriptTextInputType = '.layout__area--bottom #bottom-area .tv-script-editor-container textarea.ace_text-input';
             $addToChart = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget.tv-script-modified div[class^="rightControlsBlock-"] [data-name="add-script-to-chart"]';
 
-            // Other variables           
+            // strategy file       
             $strategyFilePath = dirname(__DIR__) . '/files/6.txt';
-            $strategyFileContentsRaW = file_get_contents( $strategyFilePath );
-            $strategyFileContentsParsed = preg_replace( "/(?<=\    )(\s\s)/", "PPPPPP", $strategyFileContentsRaW);
-
-
-
+            $strategyFileContentsRaw = file_get_contents( $strategyFilePath );
+            $strategyFileContentsParse1 = preg_replace( '/(?<=\    )(\s\s)/', 'PPPPPPP', $strategyFileContentsRaw );
+            //$strategyFileContentsParse2 = str_replace( 'PPPPPPP', '', $strategyFileContentsParse1 );
 
             
 
@@ -207,7 +202,7 @@ class ExampleTest extends DuskTestCase
                 ->press( $pineScriptTab )
                 ->click( $pineScriptTextInput )
                 ->keys( $pineScriptTextInputType, ['{command}', 'a'], ['{delete}'])
-                ->type( $pineScriptTextInputType, $strategyFileContentsParsed )
+                ->type( $pineScriptTextInputType, $strategyFileContentsParse1 )
 
                 ->press( $addToChart )
 
