@@ -132,27 +132,25 @@ class ExampleTest extends DuskTestCase
             // coins & exchanges
             $coinList = '#header-toolbar-symbol-search';
             $exchangeButton = '[data-name="symbol-search-items-dialog"] .apply-common-tooltip';
+            $exchange = 'binance';
             $exchangeInput = '[data-outside-boundary-for="exchanges-search"] input';
             $exchangeName = '[data-outside-boundary-for="exchanges-search"] [data-name="exchanges-search"] div[class^="exchangeItemsContainer-"] div[class^="wrap-"]:first-of-type';
+            $coin = 'XRPUSD';
             $coinInput = '[data-dialog-name="Symbol Search"] input';
             $coinOption = '[data-dialog-name="Symbol Search"] div[class^="listContainer-"]  div[class^="itemRow-"]:nth-of-type(2)';
             $cookieButton = '[data-role="toast-container"] div[class^="toast-wrapper-"] div[class^="actions-"] button';
 
             // pinescript
-            $expandToolBar = '.layout__area--bottom #footer-chart-panel div[class^="buttons-"] [data-name="toggle-visibility-button"]';
-            $pineScriptTab = '#footer-chart-panel div[class^="tab-"][title="Open Pine Script Editor"]';
-            $pineScriptTextInput = '.layout__area--bottom #bottom-area .tv-script-editor-container .ace_content';
-            $pineScriptTextInputType = '.layout__area--bottom #bottom-area .tv-script-editor-container textarea.ace_text-input';
-            $addToChart = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget.tv-script-modified div[class^="rightControlsBlock-"] [data-name="add-script-to-chart"]';
+            $openScriptMenu = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget div[class^="rightControlsBlock-"] div[data-name="open-script"]';
+            $openMyScript = '#overlap-manager-root div[class^="menuBox-"] div[class^="item-"]:first-of-type';
+            $strategySearchInput = '#overlap-manager-root div[class^="container-"]:nth-of-type(2) div[class^="inputContainer-"] input';
+            $strategySearchText = 'Strategy_1';
+            $strategySelect = '#overlap-manager-root div[class^="wrapper-"] div[class^="container-"] div[class^="list-"] div[class^="itemRow-"]';
+            $closeStrategySearch = 'div[data-outside-boundary-for="open-user-script-dialog"] div[class^="wrapper-"] div[class^="container-"]:first-of-type span[class^="close-"]';
+            $addToChart = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget #tv-script-pine-editor-header-root div[class^="content-"] div[class^="rightControlsBlock-"] div[data-name="add-script-to-chart"]';
 
-            // strategy file       
-            $strategyFilePath = dirname(__DIR__) . '/files/6.txt';
-            $strategyFileContentsRaw = file_get_contents( $strategyFilePath );
-            $strategyFileContentsParse1 = preg_replace( '/(?<=\    )(\s\s)/', 'PPPPPPP', $strategyFileContentsRaw );
-            //$strategyFileContentsParse2 = str_replace( 'PPPPPPP', '', $strategyFileContentsParse1 );
-
+            // data points
             
-
 
 
 
@@ -163,62 +161,63 @@ class ExampleTest extends DuskTestCase
 
                 ->pause( 1500 )
 
+                // sign in
                 ->click( $userArea )
                 ->pause( 1000 )
                 ->press( $signInLink )
                 ->pause( 1000 )
                 ->press( $emailLink )
-
                 ->press( $focusUser )
                 ->type( $focusUser, $username )
-
                 ->press( $focusPassword )
                 ->type( $focusPassword, $password )
-
                 ->press( $signInButton )
                 ->pause( 1500 )
                 ->press( $chartLink )
 
+                // choose exchange
                 ->pause( 2500 )
                 ->press( $coinList )
-
                 ->press( $exchangeButton )
-
                 ->pause( 1000 )
-                ->type( $exchangeInput, 'binance' )
+                ->type( $exchangeInput, $exchange )
                 ->press( $exchangeName )
-
                 ->pause( 1000 )
-                ->clear( $coinInput )
-                ->type( $coinInput, 'XRPUSD' )
 
+                // choose coin
+                ->clear( $coinInput )
+                ->type( $coinInput, $coin )
                 ->pause( 1000 )
                 ->press( $coinOption )
 
                 ->press( $cookieButton )
 
-                ->press( $expandToolBar )
-
-                ->press( $pineScriptTab )
-                ->click( $pineScriptTextInput )
-                ->keys( $pineScriptTextInputType, ['{command}', 'a'], ['{delete}'])
-                ->type( $pineScriptTextInputType, $strategyFileContentsParse1 )
-
+                // open strategy
+                ->pause( 1500 )
+                ->press( $openScriptMenu )
+                ->press( $openMyScript )
+                ->pause( 1000 )
+                ->type( $strategySearchInput, $strategySearchText )
+                ->press( $strategySelect )
+                ->press( $closeStrategySearch )
+                ->pause( 1000 )
                 ->press( $addToChart )
 
-                
-
-
-
-
-
-
-
+                // 
 
                 
 
 
-                ->pause(15000);
+
+
+
+
+
+
+                
+
+
+                ->pause(25000);
 
 
                 
