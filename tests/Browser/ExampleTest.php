@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 class ExampleTest extends DuskTestCase
 {
@@ -119,6 +120,7 @@ class ExampleTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
 
             // login
+            $website = 'https://www.tradingview.com/';
             $userArea = '.tv-header__user-menu-button.tv-header__user-menu-button--anonymous.js-header-user-menu-button';
             $signInLink = 'div[class^="item-"][data-name="header-user-menu-sign-in"]';
             $emailLink = '.tv-signin-dialog__social.tv-signin-dialog__toggle-email.js-show-email';
@@ -141,88 +143,89 @@ class ExampleTest extends DuskTestCase
             $cookieButton = '[data-role="toast-container"] div[class^="toast-wrapper-"] div[class^="actions-"] button';
 
             // pinescript
-            $openScriptMenu = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget div[class^="rightControlsBlock-"] div[data-name="open-script"]';
+            $openScriptMenu = '#bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget div[class^="rightControlsBlock-"] div[data-name="open-script"]';
             $openMyScript = '#overlap-manager-root div[class^="menuBox-"] div[class^="item-"]:first-of-type';
             $strategySearchInput = '#overlap-manager-root div[class^="container-"]:nth-of-type(2) div[class^="inputContainer-"] input';
             $strategySearchText = 'Strategy_1';
             $strategySelect = '#overlap-manager-root div[class^="wrapper-"] div[class^="container-"] div[class^="list-"] div[class^="itemRow-"]';
             $closeStrategySearch = 'div[data-outside-boundary-for="open-user-script-dialog"] div[class^="wrapper-"] div[class^="container-"]:first-of-type span[class^="close-"]';
-            $addToChart = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget #tv-script-pine-editor-header-root div[class^="content-"] div[class^="rightControlsBlock-"] div[data-name="add-script-to-chart"]';
+            $addToChart = '#bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget #tv-script-pine-editor-header-root div[class^="content-"] div[class^="rightControlsBlock-"] div[data-name="add-script-to-chart"]';
 
             // data points
-            
 
 
 
 
 
-            $browser
-                ->visit( 'https://www.tradingview.com/' )
 
-                ->pause( 1500 )
+            $html = $browser
 
                 // sign in
+                ->visit( $website )
+                ->waitFor( $userArea )
                 ->click( $userArea )
-                ->pause( 1000 )
+                ->waitFor( $signInLink )
                 ->press( $signInLink )
-                ->pause( 1000 )
+                ->waitFor( $emailLink )
                 ->press( $emailLink )
                 ->press( $focusUser )
                 ->type( $focusUser, $username )
                 ->press( $focusPassword )
                 ->type( $focusPassword, $password )
                 ->press( $signInButton )
-                ->pause( 1500 )
-                ->press( $chartLink )
+                ->waitFor( $chartLink )
+                ->assertVisible( $chartLink )
+                ->click( $chartLink )
 
                 // choose exchange
-                ->pause( 2500 )
+                ->waitFor( $coinList )
                 ->press( $coinList )
                 ->press( $exchangeButton )
-                ->pause( 1000 )
                 ->type( $exchangeInput, $exchange )
                 ->press( $exchangeName )
-                ->pause( 1000 )
 
                 // choose coin
                 ->clear( $coinInput )
                 ->type( $coinInput, $coin )
-                ->pause( 1000 )
+                ->waitFor( $coinOption )
                 ->press( $coinOption )
-
                 ->press( $cookieButton )
 
                 // open strategy
-                ->pause( 1500 )
+                ->waitFor( $openScriptMenu )
+                ->assertVisible( $openScriptMenu )
                 ->press( $openScriptMenu )
                 ->press( $openMyScript )
-                ->pause( 1000 )
+                ->waitFor( $strategySearchInput )
                 ->type( $strategySearchInput, $strategySearchText )
                 ->press( $strategySelect )
                 ->press( $closeStrategySearch )
-                ->pause( 1000 )
+                ->waitFor( $addToChart )
                 ->press( $addToChart )
-
-                // 
-
-                
-
-
-
-
-
-
-
-
-                
 
 
                 ->pause(25000);
 
 
+
+                // get data points
+                $crawler = new Crawler($website);
+                $data = $crawler->filter('div[data-react-class="GamePageHeader"]')->attr('data-react-props');
+
+
+
+
+
                 
 
-                //->assertVisible('.index-page')
+
+
+                //->pause(25000);
+
+
+                
+
+                
 
         });
     }
