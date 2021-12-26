@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
+use Log;
 
 class ExampleTest extends DuskTestCase
 {
@@ -69,12 +70,12 @@ class ExampleTest extends DuskTestCase
             $exchange = 'Binance';
             $exchangeInput = '[data-outside-boundary-for="exchanges-search"] input';
             $exchangeName = '[data-outside-boundary-for="exchanges-search"] [data-name="exchanges-search"] div[class^="exchangeItemsContainer-"] div[class^="wrap-"]:first-of-type';
-            $coinInput = '[data-dialog-name="Symbol Search"] input';
+            $coinInput = '#overlap-manager-root [data-dialog-name="Symbol Search"] div[class^="container-"] input ';
             $coinOption = '[data-dialog-name="Symbol Search"] div[class^="listContainer-"]  div[class^="itemRow-"]:nth-of-type(2)';
             $cookieButton = '[data-role="toast-container"] div[class^="toast-wrapper-"] div[class^="actions-"] button';
 
             // clear chart
-            $arrowOption = '#drawing-toolbar div[class^="content-"] div[class^="inner-"] div[class^="group-"]:nth-of-type(4) [data-name="removeAllDrawingTools"] div[class^="arrow-"]';
+            $arrowOption = '#drawing-toolbar div[class^="inner-"] div[class^="group-"]:nth-of-type(4) div[class^="dropdown-"] div[class^="arrow-"]';
             $removeAll = '#overlap-manager-root div[class^="menuBox-"] [data-name="remove-all"]';
 
             // pinescript
@@ -106,8 +107,8 @@ class ExampleTest extends DuskTestCase
             $intervals = [
                 ['#overlap-manager-root [data-value="1M"]', '1 Month'],
                 ['#overlap-manager-root [data-value="1W"]', '1 Week'],
-                ['#overlap-manager-root [data-value="1D"]', '1 Day'],
-                /*['#overlap-manager-root [data-value="240"]', '4 hrs'],
+                /*['#overlap-manager-root [data-value="1D"]', '1 Day'],
+                ['#overlap-manager-root [data-value="240"]', '4 hrs'],
                 ['#overlap-manager-root [data-value="180"]', '3 hrs'],
                 ['#overlap-manager-root [data-value="120"]', '2 hrs'],
                 ['#overlap-manager-root [data-value="60"]', '1 hr'],
@@ -130,14 +131,13 @@ class ExampleTest extends DuskTestCase
             $winLossRatio = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(20) > td:nth-child(2)';
 
             // CSV file
-            $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day[calculated]','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio');
+            $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day (calculated)','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio');
 
             // begin Dusk process
             $browser
 
                 // sign in
                 ->visit( $website )
-
                 ->waitFor( $userArea )
                 ->assertPresent( $userArea )
                 ->assertVisible( $userArea )
@@ -169,24 +169,49 @@ class ExampleTest extends DuskTestCase
                 ->assertPresent( $chartLink )
                 ->assertVisible( $chartLink )
                 ->press( $chartLink )
+                ->pause(500)
+                ->assertPresent( $cookieButton )
+                ->assertVisible( $cookieButton )
+                ->press( $cookieButton )
 
-                // choose exchange
-                ->waitFor( $coinList )
-                ->assertPresent( $coinList )
-                ->assertVisible( $coinList )
-                ->press( $coinList )
-                ->waitFor( $exchangeButton )
-                ->assertPresent( $exchangeButton )
-                ->assertVisible( $exchangeButton )
-                ->press( $exchangeButton )
-                ->waitFor( $exchangeInput )
-                ->assertPresent( $exchangeInput )
-                ->assertVisible( $exchangeInput )
-                ->type( $exchangeInput, $exchange )
-                ->waitFor( $exchangeName )
-                ->assertPresent( $exchangeName )
-                ->assertVisible( $exchangeName )
-                ->press( $exchangeName );
+                // clear chart
+                ->pause(2000)
+                ->press( $arrowOption )
+                ->waitFor( $removeAll )
+                ->assertPresent( $removeAll )
+                ->assertVisible( $removeAll )
+                ->press( $removeAll )
+                
+                // open strategy
+                ->waitFor( $pineScriptTab )
+                ->assertPresent( $pineScriptTab )
+                ->assertVisible( $pineScriptTab )
+                ->press( $pineScriptTab )
+                ->pause(500)
+                ->waitFor( $openScriptMenu )
+                ->assertPresent( $openScriptMenu )
+                ->assertVisible( $openScriptMenu )
+                ->press( $openScriptMenu )
+                ->waitFor( $openMyScript )
+                ->assertPresent( $openMyScript )
+                ->assertVisible( $openMyScript )
+                ->press( $openMyScript )
+                ->waitFor( $strategySearchInput )
+                ->assertPresent( $strategySearchInput )
+                ->assertVisible( $strategySearchInput )
+                ->type( $strategySearchInput, $strategyName )
+                ->waitFor( $strategySelect )
+                ->assertPresent( $strategySelect )
+                ->assertVisible( $strategySelect )
+                ->press( $strategySelect )
+                ->waitFor( $closeStrategySearch )
+                ->assertPresent( $closeStrategySearch )
+                ->assertVisible( $closeStrategySearch )
+                ->press( $closeStrategySearch )
+                ->waitFor( $addToChart )
+                ->assertPresent( $addToChart )
+                ->assertVisible( $addToChart )
+                ->press( $addToChart );
 
                 // prepare CSV file
                 $CSVfilename = $strategyName.'.csv';
@@ -198,62 +223,35 @@ class ExampleTest extends DuskTestCase
 
                 // loop through coins
                 foreach ($coins as $coin) { $browser
+
+                    // choose exchange
+                    ->waitFor( $coinList )
+                    ->assertPresent( $coinList )
+                    ->assertVisible( $coinList )
+                    ->press( $coinList )
+                    ->waitFor( $exchangeButton )
+                    ->assertPresent( $exchangeButton )
+                    ->assertVisible( $exchangeButton )
+                    ->press( $exchangeButton )
+                    ->waitFor( $exchangeInput )
+                    ->assertPresent( $exchangeInput )
+                    ->assertVisible( $exchangeInput )
+                    ->type( $exchangeInput, $exchange )
+                    ->waitFor( $exchangeName )
+                    ->assertPresent( $exchangeName )
+                    ->assertVisible( $exchangeName )
+                    ->press( $exchangeName )
                 
                     // choose coin
-                    ->waitFor( $coinInput )
                     ->assertPresent( $coinInput )
                     ->assertVisible( $coinInput )
                     ->clear( $coinInput )
+                    ->pause(500)
                     ->type( $coinInput, $coin )
                     ->waitFor( $coinOption )
                     ->assertPresent( $coinOption )
                     ->assertVisible( $coinOption )
-                    ->press( $coinOption )
-                    ->waitFor( $cookieButton )
-                    ->assertPresent( $cookieButton )
-                    ->assertVisible( $cookieButton )
-                    ->press( $cookieButton )
-
-                    // clear chart
-                    ->waitFor( $arrowOption )
-                    ->assertPresent( $arrowOption )
-                    ->assertVisible( $arrowOption )
-                    ->press( $arrowOption )
-                    ->waitFor( $removeAll )
-                    ->assertPresent( $removeAll )
-                    ->assertVisible( $removeAll )
-                    ->press( $removeAll )
-                    
-                    // open strategy
-                    ->waitFor( $pineScriptTab )
-                    ->assertPresent( $pineScriptTab )
-                    ->assertVisible( $pineScriptTab )
-                    ->press( $pineScriptTab )
-                    ->pause(500)
-                    ->waitFor( $openScriptMenu )
-                    ->assertPresent( $openScriptMenu )
-                    ->assertVisible( $openScriptMenu )
-                    ->press( $openScriptMenu )
-                    ->waitFor( $openMyScript )
-                    ->assertPresent( $openMyScript )
-                    ->assertVisible( $openMyScript )
-                    ->press( $openMyScript )
-                    ->waitFor( $strategySearchInput )
-                    ->assertPresent( $strategySearchInput )
-                    ->assertVisible( $strategySearchInput )
-                    ->type( $strategySearchInput, $strategyName )
-                    ->waitFor( $strategySelect )
-                    ->assertPresent( $strategySelect )
-                    ->assertVisible( $strategySelect )
-                    ->press( $strategySelect )
-                    ->waitFor( $closeStrategySearch )
-                    ->assertPresent( $closeStrategySearch )
-                    ->assertVisible( $closeStrategySearch )
-                    ->press( $closeStrategySearch )
-                    ->waitFor( $addToChart )
-                    ->assertPresent( $addToChart )
-                    ->assertVisible( $addToChart )
-                    ->press( $addToChart );
+                    ->press( $coinOption );
 
                     // loop through date ranges
                     foreach ($dateRanges as $dateRange) { $browser
@@ -318,7 +316,7 @@ class ExampleTest extends DuskTestCase
                                 $netProfitData, 
                                 $buyAndHoldData, 
                                 $difference, 
-                                '[blank]', 
+                                '(blank)',
                                 $TotalTradesClosedData, 
                                 $TotalTradesOpenData, 
                                 $winningTradesData, 
