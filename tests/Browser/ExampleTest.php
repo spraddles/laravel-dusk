@@ -165,7 +165,7 @@ class ExampleTest extends DuskTestCase
 
             // CSV file
             //$output = array( $csvHeaders, ... );
-            $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Total Trades closed','Trades p/day[calculated]','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio');
+            $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day[calculated]','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio');
 
             // begin Dusk process
             $browser
@@ -244,13 +244,14 @@ class ExampleTest extends DuskTestCase
                 ->waitFor( $netProfit );
                 $netProfitData = strstr($browser->text( $netProfit ), ' %', true );
                 $buyAndHoldData = strstr($browser->text( $buyAndHold ), ' %', true );
-                $TotalTradesClosedData = strstr($browser->text( $TotalTradesClosed ), ' %', true );
-                $TotalTradesOpenData = strstr($browser->text( $TotalTradesOpen ), ' %', true );
-                $winningTradesData = strstr($browser->text( $winningTrades ), ' %', true );
-                $losingTradesData = strstr($browser->text( $losingTrades ), ' %', true );
+                $TotalTradesClosedData = $browser->text( $TotalTradesClosed );
+                $TotalTradesOpenData = $browser->text( $TotalTradesOpen );
+                $winningTradesData = $browser->text( $winningTrades );
+                $losingTradesData = $browser->text( $losingTrades );
                 $percentProfitableData = strstr($browser->text( $percentProfitable ), ' %', true );
-                $winLossRatioData = strstr($browser->text( $winLossRatio ), ' %', true );
+                $winLossRatioData = $browser->text( $winLossRatio );
 
+                // CSV prepare
                 $lines = [ 
                     $coinPair, 
                     $exchange, 
@@ -258,7 +259,8 @@ class ExampleTest extends DuskTestCase
                     $interval[1], 
                     $netProfitData, 
                     $buyAndHoldData, 
-                    $difference, '[blank]', 
+                    $difference, 
+                    '[blank]', 
                     $TotalTradesClosedData, 
                     $TotalTradesOpenData, 
                     $winningTradesData, 
@@ -266,9 +268,7 @@ class ExampleTest extends DuskTestCase
                     $percentProfitableData, 
                     $winLossRatioData 
                 ];
-
-                // dump into CSV
-                $CSVdata = [
+                $CSVdata = [ // dump into CSV
                     $csvHeaders,
                     $lines
                 ];
