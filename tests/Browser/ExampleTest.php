@@ -30,61 +30,6 @@ class ExampleTest extends DuskTestCase
             'binance'
         ];
 
-        $coins = [
-            //'BTCUSD' => $this->lastName, // usage: $fake['last_name']
-            'BTCUSD',
-            'ETHUSD',
-            'MATICUSD',
-            'XRPUSD',
-            'LUNAUSD',
-            'BNBUSD',
-            'SOLUSD',
-            'EOSUSD',
-            'ADAUSD',
-            'LTCUSD',
-            'TRXUSD',
-            'DOTUSD',
-            'WAXPUSD',
-            'BCHUSD',
-            'XTZUSD'
-        ];
-
-        $date_range = [
-            '2021',
-            '32w',
-            '16w',
-            '8w',
-            '3w'
-        ];
-
-        $intervals = [
-            '5m',
-            '15m',
-            '30m',
-            '45m',
-            '1h',
-            '2h',
-            '3h',
-            '4h',
-            '1d'
-        ];
-
-        $data_points = [
-            'Coin',
-            'Exchange',
-            'Date range',
-            'Net profit',
-            'B+H',
-            'Difference',
-            'Total Trades closed',
-            'Trades p/day [calculated]',
-            'Trades open',
-            'Winning trades',
-            'Losing trades',
-            'Percent profitable',
-            'Win loss ratio'
-        ];
-
         $this->browse(function (Browser $browser) {
 
             // login
@@ -99,18 +44,36 @@ class ExampleTest extends DuskTestCase
             $signInButton = '.tv-signin-dialog__footer button[id^="email-signin__submit-button__"]';
             $chartLink = 'a[data-main-menu-root-track-id="chart"]';
 
+            // coins
+            $coins = [
+                'BTCUSD',
+                'ETHUSD',
+                /*'MATICUSD',
+                'XRPUSD',
+                'LUNAUSD',
+                'BNBUSD',
+                'SOLUSD',
+                'EOSUSD',
+                'ADAUSD',
+                'LTCUSD',
+                'TRXUSD',
+                'DOTUSD',
+                'WAXPUSD',
+                'BCHUSD',
+                'XTZUSD'*/
+            ];
+
             // coins & exchanges
             $coinList = '#header-toolbar-symbol-search';
             $exchangeButton = '[data-name="symbol-search-items-dialog"] .apply-common-tooltip';
             $exchange = 'Binance';
             $exchangeInput = '[data-outside-boundary-for="exchanges-search"] input';
             $exchangeName = '[data-outside-boundary-for="exchanges-search"] [data-name="exchanges-search"] div[class^="exchangeItemsContainer-"] div[class^="wrap-"]:first-of-type';
-            $coinPair = 'XRPUSD';
             $coinInput = '[data-dialog-name="Symbol Search"] input';
             $coinOption = '[data-dialog-name="Symbol Search"] div[class^="listContainer-"]  div[class^="itemRow-"]:nth-of-type(2)';
             $cookieButton = '[data-role="toast-container"] div[class^="toast-wrapper-"] div[class^="actions-"] button';
 
-            // clear strategy
+            // clear chart
             $arrowOption = '#drawing-toolbar div[class^="content-"] div[class^="inner-"] div[class^="group-"]:nth-of-type(4) [data-name="removeAllDrawingTools"] div[class^="arrow-"]';
             $removeAll = '#overlap-manager-root div[class^="menuBox-"] [data-name="remove-all"]';
 
@@ -124,37 +87,40 @@ class ExampleTest extends DuskTestCase
             $closeStrategySearch = 'div[data-outside-boundary-for="open-user-script-dialog"] div[class^="wrapper-"] div[class^="container-"]:first-of-type span[class^="close-"]';
             $addToChart = '#bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget #tv-script-pine-editor-header-root div[class^="content-"] div[class^="rightControlsBlock-"] div[data-name="add-script-to-chart"]';
 
-            // date range chart setting
-            $dateRange_1 = ['div[id$="_item_All-2021"]', 'All 2021'];
-            $dateRange_2 = ['div[id$="_item_32-weeks"]', '32 weeks'];
-            $dateRange_3 = ['div[id$="_item_16-weeks"]', '16 weeks'];
-            $dateRange_4 = ['div[id$="_item_8-weeks"]', '8 weeks'];
-            $dateRange_5 = ['div[id$="_item_3-weeks"]', '3 weeks'];
+            // date ranges
+            $dateRanges = [
+                ['div[id$="_item_All-2021"]', 'All 2021'],
+                ['div[id$="_item_32-weeks"]', '32 weeks'],
+                /*['div[id$="_item_16-weeks"]', '16 weeks'],
+                ['div[id$="_item_8-weeks"]', '8 weeks'],
+                ['div[id$="_item_3-weeks"]', '3 weeks']*/
+            ];
+
+            // chart setting
             $chartSettings = '#bottom-area .bottom-widgetbar-content.backtesting .group:nth-of-type(2) .js-backtesting-open-format-dialog';
             $inputsTab = '#overlap-manager-root div[data-outside-boundary-for="indicator-properties-dialog"] div[class^="scrollWrap-"] div[class^="tabs-"] [data-value="inputs"]';
             $selectArrow = '#overlap-manager-root div[data-outside-boundary-for="indicator-properties-dialog"] div[class^="scrollable-"] div[class^="content-"] div[class^="cell-"]:last-of-type span[class^="container-"] span[class^="inner-slot-"]:nth-of-type(2)';
-            $dateRange = $dateRange_2;
             $okButton = '#overlap-manager-root div[data-outside-boundary-for="indicator-properties-dialog"] div[class^="footer-"] div[class^="buttons-"] span[class^="submitButton-"] button';
 
             // time intervals
-            $interval_1M = ['#overlap-manager-root [data-value="1M"]', '1 Month'];
-            $interval_1W = ['#overlap-manager-root [data-value="1W"]', '1 Week'];
-            $interval_1D = ['#overlap-manager-root [data-value="1D"]', '1 Day'];
-            $interval_4hrs = ['#overlap-manager-root [data-value="240"]', '4 hrs'];
-            $interval_3hrs = ['#overlap-manager-root [data-value="180"]', '3 hrs'];
-            $interval_2hrs = ['#overlap-manager-root [data-value="120"]', '2 hrs'];
-            $interval_1hr = ['#overlap-manager-root [data-value="60"]', '1 hr'];
-            $interval_45mins = ['#overlap-manager-root [data-value="45"]', '45 mins'];
-            $interval_30mins = ['#overlap-manager-root [data-value="30"]', '30 mins'];
-            $interval_15mins = ['#overlap-manager-root [data-value="15"]', '15 mins'];
-            $interval_5mins = ['#overlap-manager-root [data-value="5"]', '5 mins'];
+            $intervals = [
+                ['#overlap-manager-root [data-value="1M"]', '1 Month'],
+                ['#overlap-manager-root [data-value="1W"]', '1 Week'],
+                ['#overlap-manager-root [data-value="1D"]', '1 Day'],
+                /*['#overlap-manager-root [data-value="240"]', '4 hrs'],
+                ['#overlap-manager-root [data-value="180"]', '3 hrs'],
+                ['#overlap-manager-root [data-value="120"]', '2 hrs'],
+                ['#overlap-manager-root [data-value="60"]', '1 hr'],
+                ['#overlap-manager-root [data-value="45"]', '45 mins'],
+                ['#overlap-manager-root [data-value="30"]', '30 mins'],
+                ['#overlap-manager-root [data-value="15"]', '15 mins'],
+                ['#overlap-manager-root [data-value="5"]', '5 mins']*/
+            ];
             $intervalMenu = '#header-toolbar-intervals div[class^="menu-"]';
-            $interval = $interval_15mins;
 
             // data points
             $netProfit = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div:nth-child(2) > span';
             $buyAndHold = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(5) > td:nth-child(2) > div:nth-child(2) > span';
-            $difference = (int)$netProfit - (int)$buyAndHold;
             // $tradesPerDay = ''; [calculated value]
             $TotalTradesClosed = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(12) > td:nth-child(2)';
             $TotalTradesOpen = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(13) > td:nth-child(2)';
@@ -164,7 +130,6 @@ class ExampleTest extends DuskTestCase
             $winLossRatio = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(20) > td:nth-child(2)';
 
             // CSV file
-            //$output = array( $csvHeaders, ... );
             $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day[calculated]','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio');
 
             // begin Dusk process
@@ -172,116 +137,200 @@ class ExampleTest extends DuskTestCase
 
                 // sign in
                 ->visit( $website )
+
                 ->waitFor( $userArea )
+                ->assertPresent( $userArea )
+                ->assertVisible( $userArea )
                 ->click( $userArea )
                 ->waitFor( $signInLink )
+                ->assertPresent( $signInLink )
+                ->assertVisible( $signInLink )
                 ->press( $signInLink )
                 ->waitFor( $emailLink )
+                ->assertPresent( $emailLink )
+                ->assertVisible( $emailLink )
                 ->press( $emailLink )
+                ->waitFor( $focusUser )
+                ->assertPresent( $focusUser )
+                ->assertVisible( $focusUser )
                 ->press( $focusUser )
                 ->type( $focusUser, $username )
+                ->waitFor( $focusPassword )
+                ->assertPresent( $focusPassword )
+                ->assertVisible( $focusPassword )
                 ->press( $focusPassword )
                 ->type( $focusPassword, $password )
+                ->waitFor( $signInButton )
+                ->assertPresent( $signInButton )
+                ->assertVisible( $signInButton )
                 ->press( $signInButton )
                 ->pause(1000)
                 ->waitFor( $chartLink )
+                ->assertPresent( $chartLink )
                 ->assertVisible( $chartLink )
                 ->press( $chartLink )
 
                 // choose exchange
                 ->waitFor( $coinList )
+                ->assertPresent( $coinList )
+                ->assertVisible( $coinList )
                 ->press( $coinList )
+                ->waitFor( $exchangeButton )
+                ->assertPresent( $exchangeButton )
+                ->assertVisible( $exchangeButton )
                 ->press( $exchangeButton )
+                ->waitFor( $exchangeInput )
+                ->assertPresent( $exchangeInput )
+                ->assertVisible( $exchangeInput )
                 ->type( $exchangeInput, $exchange )
-                ->press( $exchangeName )
+                ->waitFor( $exchangeName )
+                ->assertPresent( $exchangeName )
+                ->assertVisible( $exchangeName )
+                ->press( $exchangeName );
 
-                // choose coin
-                ->clear( $coinInput )
-                ->type( $coinInput, $coinPair )
-                ->waitFor( $coinOption )
-                ->press( $coinOption )
-                ->press( $cookieButton )
-
-                // clear strategy
-                ->press( $arrowOption )
-                ->press( $removeAll )             
-
-                // open strategy
-                ->press( $pineScriptTab )
-                ->waitFor( $openScriptMenu )
-                ->assertVisible( $openScriptMenu )
-                ->press( $openScriptMenu )
-                ->press( $openMyScript )
-                ->waitFor( $strategySearchInput )
-                ->type( $strategySearchInput, $strategyName )
-                ->press( $strategySelect )
-                ->press( $closeStrategySearch )
-                ->waitFor( $addToChart )
-                ->press( $addToChart )
-
-                // change date range
-                ->waitFor( $chartSettings )
-                ->press( $chartSettings )
-                ->waitFor( $inputsTab )
-                ->press( $inputsTab )
-                ->waitFor( $selectArrow )
-                ->press( $selectArrow )
-                ->waitFor( $dateRange[0] )
-                ->press( $dateRange[0] )
-                ->pause(1000)
-                ->waitFor( $okButton )
-                ->press( $okButton )
-
-                // change time interval
-                ->waitFor( $intervalMenu )
-                ->press( $intervalMenu )
-                ->waitFor( $interval[0] )
-                ->press( $interval[0] )
-
-                ->pause(1000)
-
-                // data points
-                ->waitFor( $netProfit );
-                $netProfitData = strstr($browser->text( $netProfit ), ' %', true );
-                $buyAndHoldData = strstr($browser->text( $buyAndHold ), ' %', true );
-                $TotalTradesClosedData = $browser->text( $TotalTradesClosed );
-                $TotalTradesOpenData = $browser->text( $TotalTradesOpen );
-                $winningTradesData = $browser->text( $winningTrades );
-                $losingTradesData = $browser->text( $losingTrades );
-                $percentProfitableData = strstr($browser->text( $percentProfitable ), ' %', true );
-                $winLossRatioData = $browser->text( $winLossRatio );
-
-                // CSV prepare
-                $lines = [ 
-                    $coinPair, 
-                    $exchange, 
-                    $dateRange[1], 
-                    $interval[1], 
-                    $netProfitData, 
-                    $buyAndHoldData, 
-                    $difference, 
-                    '[blank]', 
-                    $TotalTradesClosedData, 
-                    $TotalTradesOpenData, 
-                    $winningTradesData, 
-                    $losingTradesData, 
-                    $percentProfitableData, 
-                    $winLossRatioData 
-                ];
-                $CSVdata = [ // dump into CSV
-                    $csvHeaders,
-                    $lines
-                ];
+                // prepare CSV file
                 $CSVfilename = $strategyName.'.csv';
-                $file = fopen( $CSVfilename, 'w' ); // open csv file for writing
+                $file = fopen( $CSVfilename, 'w' );
                 if ($file === false) {
                     die('Error opening the file ' . $CSVfilename);
-                }
-                foreach ($CSVdata as $row) { // write each row at a time to a file
-                    fputcsv($file, $row);
-                }
-                fclose($file); // close the file
+                };
+                fputcsv( $file, $csvHeaders );
 
+                // loop through coins
+                foreach ($coins as $coin) { $browser
+                
+                    // choose coin
+                    ->waitFor( $coinInput )
+                    ->assertPresent( $coinInput )
+                    ->assertVisible( $coinInput )
+                    ->clear( $coinInput )
+                    ->type( $coinInput, $coin )
+                    ->waitFor( $coinOption )
+                    ->assertPresent( $coinOption )
+                    ->assertVisible( $coinOption )
+                    ->press( $coinOption )
+                    ->waitFor( $cookieButton )
+                    ->assertPresent( $cookieButton )
+                    ->assertVisible( $cookieButton )
+                    ->press( $cookieButton )
+
+                    // clear chart
+                    ->waitFor( $arrowOption )
+                    ->assertPresent( $arrowOption )
+                    ->assertVisible( $arrowOption )
+                    ->press( $arrowOption )
+                    ->waitFor( $removeAll )
+                    ->assertPresent( $removeAll )
+                    ->assertVisible( $removeAll )
+                    ->press( $removeAll )
+                    
+                    // open strategy
+                    ->waitFor( $pineScriptTab )
+                    ->assertPresent( $pineScriptTab )
+                    ->assertVisible( $pineScriptTab )
+                    ->press( $pineScriptTab )
+                    ->pause(500)
+                    ->waitFor( $openScriptMenu )
+                    ->assertPresent( $openScriptMenu )
+                    ->assertVisible( $openScriptMenu )
+                    ->press( $openScriptMenu )
+                    ->waitFor( $openMyScript )
+                    ->assertPresent( $openMyScript )
+                    ->assertVisible( $openMyScript )
+                    ->press( $openMyScript )
+                    ->waitFor( $strategySearchInput )
+                    ->assertPresent( $strategySearchInput )
+                    ->assertVisible( $strategySearchInput )
+                    ->type( $strategySearchInput, $strategyName )
+                    ->waitFor( $strategySelect )
+                    ->assertPresent( $strategySelect )
+                    ->assertVisible( $strategySelect )
+                    ->press( $strategySelect )
+                    ->waitFor( $closeStrategySearch )
+                    ->assertPresent( $closeStrategySearch )
+                    ->assertVisible( $closeStrategySearch )
+                    ->press( $closeStrategySearch )
+                    ->waitFor( $addToChart )
+                    ->assertPresent( $addToChart )
+                    ->assertVisible( $addToChart )
+                    ->press( $addToChart );
+
+                    // loop through date ranges
+                    foreach ($dateRanges as $dateRange) { $browser
+
+                        // change date range
+                        ->waitFor( $chartSettings )
+                        ->assertPresent( $chartSettings )
+                        ->assertVisible( $chartSettings )
+                        ->press( $chartSettings )
+                        ->waitFor( $inputsTab )
+                        ->assertPresent( $inputsTab )
+                        ->assertVisible( $inputsTab )
+                        ->press( $inputsTab )
+                        ->waitFor( $selectArrow )
+                        ->assertPresent( $selectArrow )
+                        ->assertVisible( $selectArrow )
+                        ->press( $selectArrow )
+                        ->waitFor( $dateRange[0] )
+                        ->assertPresent( $dateRange[0] )
+                        ->assertVisible( $dateRange[0] )
+                        ->press( $dateRange[0] )
+                        ->pause(1000)
+                        ->waitFor( $okButton )
+                        ->assertPresent( $okButton )
+                        ->assertVisible( $okButton )
+                        ->press( $okButton );
+
+                        foreach ($intervals as $interval) { $browser
+
+                            // change time interval
+                            ->waitFor( $intervalMenu )
+                            ->assertPresent( $intervalMenu )
+                            ->assertVisible( $intervalMenu )
+                            ->press( $intervalMenu )
+                            ->waitFor( $interval[0] )
+                            ->assertPresent( $interval[0] )
+                            ->assertVisible( $interval[0] )
+                            ->press( $interval[0] )
+                            ->pause(1000)
+
+                            // data points
+                            ->waitFor( $netProfit )
+                            ->assertPresent( $netProfit )
+                            ->assertVisible( $netProfit );
+
+                            $netProfitData = strstr($browser->text( $netProfit ), ' %', true );
+                            $buyAndHoldData = strstr($browser->text( $buyAndHold ), ' %', true );
+                            $difference = (int)$netProfitData - (int)$buyAndHoldData;
+                            $TotalTradesClosedData = $browser->text( $TotalTradesClosed );
+                            $TotalTradesOpenData = $browser->text( $TotalTradesOpen );
+                            $winningTradesData = $browser->text( $winningTrades );
+                            $losingTradesData = $browser->text( $losingTrades );
+                            $percentProfitableData = strstr($browser->text( $percentProfitable ), ' %', true );
+                            $winLossRatioData = $browser->text( $winLossRatio );
+
+                            // CSV add data
+                            $lines = [ 
+                                $coin, 
+                                $exchange, 
+                                $dateRange[1], 
+                                $interval[1], 
+                                $netProfitData, 
+                                $buyAndHoldData, 
+                                $difference, 
+                                '[blank]', 
+                                $TotalTradesClosedData, 
+                                $TotalTradesOpenData, 
+                                $winningTradesData, 
+                                $losingTradesData, 
+                                $percentProfitableData, 
+                                $winLossRatioData 
+                            ];
+                            fputcsv( $file, $lines );
+                        }
+                    }
+                }
+            fclose($file);
         });
     }
 }
