@@ -122,16 +122,17 @@ class ExampleTest extends DuskTestCase
             // data points
             $netProfit = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div:nth-child(2) > span';
             $buyAndHold = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(5) > td:nth-child(2) > div:nth-child(2) > span';
-            // $tradesPerDay = ''; [calculated value]
             $TotalTradesClosed = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(12) > td:nth-child(2)';
             $TotalTradesOpen = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(13) > td:nth-child(2)';
             $winningTrades = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(14) > td:nth-child(2)';
             $losingTrades = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(15) > td:nth-child(2)';
             $percentProfitable = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(16) > td:nth-child(2)';
             $winLossRatio = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(20) > td:nth-child(2)';
+            $sharpeRatio = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(6) > td:nth-child(2)';
+            $sortinoRatio = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(7) > td:nth-child(2)';
 
             // CSV file
-            $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day (calculated)','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio');
+            $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio','Sharpe Ratio','Sortino Ratio');
 
             // begin Dusk process
             $browser
@@ -322,6 +323,11 @@ class ExampleTest extends DuskTestCase
                                 ->assertVisible( $TotalTradesClosed );
                             $TotalTradesClosedData = $browser->text( $TotalTradesClosed );
 
+                            if( ( ((int)$TotalTradesClosedData !== 0))  || ((int)$dateRange[2] !== 0) ) {
+                                $tradesPerDay = number_format( (int)$TotalTradesClosedData / (int)$dateRange[2], 2 );
+                            }
+                            else $tradesPerDay = 0;
+
                             $browser
                                 ->pause($defaultPause)
                                 ->waitFor( $TotalTradesOpen )
@@ -357,22 +363,38 @@ class ExampleTest extends DuskTestCase
                                 ->assertVisible( $winLossRatio );
                             $winLossRatioData = $browser->text( $winLossRatio );
 
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $sharpeRatio )
+                                ->assertPresent( $sharpeRatio )
+                                ->assertVisible( $sharpeRatio );
+                            $sharpeRatioData = $browser->text( $sharpeRatio );
+
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $sortinoRatio )
+                                ->assertPresent( $sortinoRatio )
+                                ->assertVisible( $sortinoRatio );
+                            $sortinoRatioData = $browser->text( $sortinoRatio );
+
                             // CSV add data
-                            $lines = [ 
-                                $coin, 
-                                $exchange, 
-                                $dateRange[1], 
-                                $interval[1], 
-                                $netProfitData, 
-                                $buyAndHoldData, 
-                                $difference, 
-                                '(blank)',
-                                $TotalTradesClosedData, 
-                                $TotalTradesOpenData, 
-                                $winningTradesData, 
-                                $losingTradesData, 
-                                $percentProfitableData, 
-                                $winLossRatioData 
+                            $lines = [
+                                $coin,
+                                $exchange,
+                                $dateRange[1],
+                                $interval[1],
+                                $netProfitData,
+                                $buyAndHoldData,
+                                $difference,
+                                $tradesPerDay,
+                                $TotalTradesClosedData,
+                                $TotalTradesOpenData,
+                                $winningTradesData,
+                                $losingTradesData,
+                                $percentProfitableData,
+                                $winLossRatioData,
+                                $sharpeRatioData,
+                                $sortinoRatioData
                             ];
                             fputcsv( $file, $lines );
                         }
