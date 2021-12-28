@@ -56,8 +56,7 @@ abstract class DuskTestCase extends BaseTestCase
      */
     protected function hasHeadlessDisabled()
     {
-
-        if ( env('DUSK_HEADLESS_DISABLED') !== null && env('DUSK_HEADLESS_DISABLED') == true)
+        if ( env('DUSK_HEADLESS_DISABLED') == null || env('DUSK_HEADLESS_DISABLED') == false )
         return true;
     }
 }
