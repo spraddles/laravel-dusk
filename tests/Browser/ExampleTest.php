@@ -47,9 +47,9 @@ class ExampleTest extends DuskTestCase
 
             // coins
             $coins = [
-                'BTCUSD',
+                /*'BTCUSD',
                 'ETHUSD',
-                /*'MATICUSD',
+                'MATICUSD',
                 'XRPUSD',
                 'LUNAUSD',
                 'BNBUSD',
@@ -60,8 +60,8 @@ class ExampleTest extends DuskTestCase
                 'TRXUSD',
                 'DOTUSD',
                 'WAXPUSD',
-                'BCHUSD',
-                'XTZUSD'*/
+                'BCHUSD',*/
+                'XTZUSD'
             ];
 
             // coins & exchanges
@@ -71,7 +71,7 @@ class ExampleTest extends DuskTestCase
             $exchangeInput = '[data-outside-boundary-for="exchanges-search"] input';
             $exchangeName = '[data-outside-boundary-for="exchanges-search"] [data-name="exchanges-search"] div[class^="exchangeItemsContainer-"] div[class^="wrap-"]:first-of-type';
             $coinInput = '#overlap-manager-root [data-dialog-name="Symbol Search"] div[class^="container-"] input ';
-            $coinOption = '[data-dialog-name="Symbol Search"] div[class^="listContainer-"]  div[class^="itemRow-"]:nth-of-type(2)';
+            $coinOption = '[data-dialog-name="Symbol Search"] div[class^="listContainer-"] div[class^="itemRow-"]:nth-of-type(2)';
             $cookieButton = '[data-role="toast-container"] div[class^="toast-wrapper-"] div[class^="actions-"] button';
 
             // clear chart
@@ -90,11 +90,11 @@ class ExampleTest extends DuskTestCase
 
             // date ranges
             $dateRanges = [
-                ['div[id$="_item_All-2021"]', 'All 2021'],
-                ['div[id$="_item_32-weeks"]', '32 weeks'],
-                /*['div[id$="_item_16-weeks"]', '16 weeks'],
-                ['div[id$="_item_8-weeks"]', '8 weeks'],
-                ['div[id$="_item_3-weeks"]', '3 weeks']*/
+                ['div[id$="_item_All-2021"]', 'All 2021', 298],
+                ['div[id$="_item_32-weeks"]', '32 weeks', 224],
+                /*['div[id$="_item_16-weeks"]', '16 weeks', 112],
+                ['div[id$="_item_8-weeks"]', '8 weeks', 56],
+                ['div[id$="_item_3-weeks"]', '3 weeks', 21]*/
             ];
 
             // chart setting
@@ -105,17 +105,17 @@ class ExampleTest extends DuskTestCase
 
             // time intervals
             $intervals = [
-                ['#overlap-manager-root [data-value="1M"]', '1 Month'],
+                /*['#overlap-manager-root [data-value="1M"]', '1 Month'],
                 ['#overlap-manager-root [data-value="1W"]', '1 Week'],
-                /*['#overlap-manager-root [data-value="1D"]', '1 Day'],
+                ['#overlap-manager-root [data-value="1D"]', '1 Day'],
                 ['#overlap-manager-root [data-value="240"]', '4 hrs'],
                 ['#overlap-manager-root [data-value="180"]', '3 hrs'],
                 ['#overlap-manager-root [data-value="120"]', '2 hrs'],
                 ['#overlap-manager-root [data-value="60"]', '1 hr'],
                 ['#overlap-manager-root [data-value="45"]', '45 mins'],
-                ['#overlap-manager-root [data-value="30"]', '30 mins'],
+                ['#overlap-manager-root [data-value="30"]', '30 mins'],*/
                 ['#overlap-manager-root [data-value="15"]', '15 mins'],
-                ['#overlap-manager-root [data-value="5"]', '5 mins']*/
+                ['#overlap-manager-root [data-value="5"]', '5 mins']
             ];
             $intervalMenu = '#header-toolbar-intervals div[class^="menu-"]';
 
@@ -169,25 +169,25 @@ class ExampleTest extends DuskTestCase
                 ->assertPresent( $chartLink )
                 ->assertVisible( $chartLink )
                 ->press( $chartLink )
-                ->pause(500)
+                ->pause(2000)
                 ->assertPresent( $cookieButton )
                 ->assertVisible( $cookieButton )
                 ->press( $cookieButton )
 
                 // clear chart
-                ->pause(2000)
+                ->pause(1500)
                 ->press( $arrowOption )
                 ->waitFor( $removeAll )
                 ->assertPresent( $removeAll )
                 ->assertVisible( $removeAll )
                 ->press( $removeAll )
-                
-                // open strategy
+                ->pause(1500)
+
+                // add strategy
                 ->waitFor( $pineScriptTab )
                 ->assertPresent( $pineScriptTab )
                 ->assertVisible( $pineScriptTab )
                 ->press( $pineScriptTab )
-                ->pause(500)
                 ->waitFor( $openScriptMenu )
                 ->assertPresent( $openScriptMenu )
                 ->assertVisible( $openScriptMenu )
@@ -229,10 +229,12 @@ class ExampleTest extends DuskTestCase
                     ->assertPresent( $coinList )
                     ->assertVisible( $coinList )
                     ->press( $coinList )
+
                     ->waitFor( $exchangeButton )
                     ->assertPresent( $exchangeButton )
                     ->assertVisible( $exchangeButton )
                     ->press( $exchangeButton )
+
                     ->waitFor( $exchangeInput )
                     ->assertPresent( $exchangeInput )
                     ->assertVisible( $exchangeInput )
@@ -246,12 +248,14 @@ class ExampleTest extends DuskTestCase
                     ->assertPresent( $coinInput )
                     ->assertVisible( $coinInput )
                     ->clear( $coinInput )
-                    ->pause(500)
+                    ->pause(1000)
                     ->type( $coinInput, $coin )
+                    ->pause(1000)
                     ->waitFor( $coinOption )
                     ->assertPresent( $coinOption )
                     ->assertVisible( $coinOption )
-                    ->press( $coinOption );
+                    ->press( $coinOption )
+                    ->pause(1500);
 
                     // loop through date ranges
                     foreach ($dateRanges as $dateRange) { $browser
@@ -273,15 +277,17 @@ class ExampleTest extends DuskTestCase
                         ->assertPresent( $dateRange[0] )
                         ->assertVisible( $dateRange[0] )
                         ->press( $dateRange[0] )
-                        ->pause(1000)
+                        ->pause(500)
                         ->waitFor( $okButton )
                         ->assertPresent( $okButton )
                         ->assertVisible( $okButton )
-                        ->press( $okButton );
+                        ->press( $okButton )
+                        ->pause(500);
 
                         foreach ($intervals as $interval) { $browser
 
                             // change time interval
+                            ->pause(750)
                             ->waitFor( $intervalMenu )
                             ->assertPresent( $intervalMenu )
                             ->assertVisible( $intervalMenu )
@@ -289,22 +295,66 @@ class ExampleTest extends DuskTestCase
                             ->waitFor( $interval[0] )
                             ->assertPresent( $interval[0] )
                             ->assertVisible( $interval[0] )
-                            ->press( $interval[0] )
-                            ->pause(1000)
-
+                            ->press( $interval[0] );
+                            
                             // data points
-                            ->waitFor( $netProfit )
-                            ->assertPresent( $netProfit )
-                            ->assertVisible( $netProfit );
-
+                            $defaultPause = 2500;
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $netProfit )
+                                ->assertPresent( $netProfit )
+                                ->assertVisible( $netProfit );
                             $netProfitData = strstr($browser->text( $netProfit ), ' %', true );
+
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $buyAndHold )
+                                ->assertPresent( $buyAndHold )
+                                ->assertVisible( $buyAndHold );
                             $buyAndHoldData = strstr($browser->text( $buyAndHold ), ' %', true );
+
                             $difference = (int)$netProfitData - (int)$buyAndHoldData;
+
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $TotalTradesClosed )
+                                ->assertPresent( $TotalTradesClosed )
+                                ->assertVisible( $TotalTradesClosed );
                             $TotalTradesClosedData = $browser->text( $TotalTradesClosed );
+
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $TotalTradesOpen )
+                                ->assertPresent( $TotalTradesOpen )
+                                ->assertVisible( $TotalTradesOpen );
                             $TotalTradesOpenData = $browser->text( $TotalTradesOpen );
+
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $winningTrades )
+                                ->assertPresent( $winningTrades )
+                                ->assertVisible( $winningTrades );
                             $winningTradesData = $browser->text( $winningTrades );
+
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $losingTrades )
+                                ->assertPresent( $losingTrades )
+                                ->assertVisible( $losingTrades );
                             $losingTradesData = $browser->text( $losingTrades );
+
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $percentProfitable )
+                                ->assertPresent( $percentProfitable )
+                                ->assertVisible( $percentProfitable );
                             $percentProfitableData = strstr($browser->text( $percentProfitable ), ' %', true );
+
+                            $browser
+                                ->pause($defaultPause)
+                                ->waitFor( $winLossRatio )
+                                ->assertPresent( $winLossRatio )
+                                ->assertVisible( $winLossRatio );
                             $winLossRatioData = $browser->text( $winLossRatio );
 
                             // CSV add data
