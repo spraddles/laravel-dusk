@@ -18,15 +18,6 @@ class ExampleTest extends DuskTestCase
     public function testBasicExample()
     {
 
-        $strategy = [
-            'Strategy_1',
-            'Strategy_2',
-            'Strategy_3',
-            'Strategy_4',
-            'Strategy_5',
-            'Strategy_6'
-        ];
-
         $exchanges = [
             'binance'
         ];
