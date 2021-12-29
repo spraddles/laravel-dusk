@@ -38,7 +38,7 @@ class ExampleTest extends DuskTestCase
 
             // coins
             $coins = [
-                /*'BTCUSD',
+                'BTCUSD',
                 'ETHUSD',
                 'MATICUSD',
                 'XRPUSD',
@@ -51,7 +51,7 @@ class ExampleTest extends DuskTestCase
                 'TRXUSD',
                 'DOTUSD',
                 'WAXPUSD',
-                'BCHUSD',*/
+                'BCHUSD',
                 'XTZUSD'
             ];
 
@@ -79,13 +79,14 @@ class ExampleTest extends DuskTestCase
             $closeStrategySearch = 'div[data-outside-boundary-for="open-user-script-dialog"] div[class^="wrapper-"] div[class^="container-"]:first-of-type span[class^="close-"]';
             $addToChart = '#bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget #tv-script-pine-editor-header-root div[class^="content-"] div[class^="rightControlsBlock-"] div[data-name="add-script-to-chart"]';
 
-            // date ranges
+            // date ranges: the 3rd item in array is days in that period (used for trades p/day calculation)
             $dateRanges = [
-                ['div[id$="_item_All-2021"]', 'All 2021', 298],
+                /*['div[id$="_item_All-2021"]', 'All 2021', 298],
                 ['div[id$="_item_32-weeks"]', '32 weeks', 224],
-                /*['div[id$="_item_16-weeks"]', '16 weeks', 112],
+                ['div[id$="_item_16-weeks"]', '16 weeks', 112],
                 ['div[id$="_item_8-weeks"]', '8 weeks', 56],
                 ['div[id$="_item_3-weeks"]', '3 weeks', 21]*/
+                ['div[id$="_item_Bad_period_BTC"]', 'Bad period BTC', 99]
             ];
 
             // chart setting
@@ -96,7 +97,7 @@ class ExampleTest extends DuskTestCase
 
             // time intervals
             $intervals = [
-                /*['#overlap-manager-root [data-value="1M"]', '1 Month'],
+                ['#overlap-manager-root [data-value="1M"]', '1 Month'],
                 ['#overlap-manager-root [data-value="1W"]', '1 Week'],
                 ['#overlap-manager-root [data-value="1D"]', '1 Day'],
                 ['#overlap-manager-root [data-value="240"]', '4 hrs'],
@@ -104,7 +105,7 @@ class ExampleTest extends DuskTestCase
                 ['#overlap-manager-root [data-value="120"]', '2 hrs'],
                 ['#overlap-manager-root [data-value="60"]', '1 hr'],
                 ['#overlap-manager-root [data-value="45"]', '45 mins'],
-                ['#overlap-manager-root [data-value="30"]', '30 mins'],*/
+                ['#overlap-manager-root [data-value="30"]', '30 mins'],
                 ['#overlap-manager-root [data-value="15"]', '15 mins'],
                 ['#overlap-manager-root [data-value="5"]', '5 mins']
             ];
@@ -126,8 +127,9 @@ class ExampleTest extends DuskTestCase
             $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio','Sharpe Ratio','Sortino Ratio');
 
             // begin Dusk process
+            $testPause = 1500; // use to slow Dusk down for diagnosing issues
             $browser
-
+            
                 // sign in
                 ->visit( $website )
                 ->waitFor( $userArea )
@@ -138,29 +140,35 @@ class ExampleTest extends DuskTestCase
                 ->assertPresent( $signInLink )
                 ->assertVisible( $signInLink )
                 ->press( $signInLink )
+                ->pause($testPause)
                 ->waitFor( $emailLink )
                 ->assertPresent( $emailLink )
                 ->assertVisible( $emailLink )
                 ->press( $emailLink )
+                ->pause($testPause)
                 ->waitFor( $focusUser )
                 ->assertPresent( $focusUser )
                 ->assertVisible( $focusUser )
                 ->press( $focusUser )
+                ->pause($testPause)
                 ->type( $focusUser, $username )
                 ->waitFor( $focusPassword )
                 ->assertPresent( $focusPassword )
                 ->assertVisible( $focusPassword )
                 ->press( $focusPassword )
+                ->pause($testPause)
                 ->type( $focusPassword, $password )
                 ->waitFor( $signInButton )
                 ->assertPresent( $signInButton )
                 ->assertVisible( $signInButton )
                 ->press( $signInButton )
+                ->pause($testPause)
                 ->pause(1000)
                 ->waitFor( $chartLink )
                 ->assertPresent( $chartLink )
                 ->assertVisible( $chartLink )
                 ->press( $chartLink )
+                ->pause($testPause)
                 ->pause(2000)
                 ->assertPresent( $cookieButton )
                 ->assertVisible( $cookieButton )
@@ -176,18 +184,28 @@ class ExampleTest extends DuskTestCase
                 ->pause(1500)
 
                 // add strategy
+
+
+                /*->pause(1000)
                 ->waitFor( $pineScriptTab )
                 ->assertPresent( $pineScriptTab )
                 ->assertVisible( $pineScriptTab )
-                ->press( $pineScriptTab )
+                ->press( $pineScriptTab )*/
+
+
+
+
+
                 ->waitFor( $openScriptMenu )
                 ->assertPresent( $openScriptMenu )
                 ->assertVisible( $openScriptMenu )
                 ->press( $openScriptMenu )
+                ->pause($testPause)
                 ->waitFor( $openMyScript )
                 ->assertPresent( $openMyScript )
                 ->assertVisible( $openMyScript )
                 ->press( $openMyScript )
+                ->pause($testPause)
                 ->waitFor( $strategySearchInput )
                 ->assertPresent( $strategySearchInput )
                 ->assertVisible( $strategySearchInput )
@@ -196,14 +214,17 @@ class ExampleTest extends DuskTestCase
                 ->assertPresent( $strategySelect )
                 ->assertVisible( $strategySelect )
                 ->press( $strategySelect )
+                ->pause($testPause)
                 ->waitFor( $closeStrategySearch )
                 ->assertPresent( $closeStrategySearch )
                 ->assertVisible( $closeStrategySearch )
                 ->press( $closeStrategySearch )
+                ->pause($testPause)
                 ->waitFor( $addToChart )
                 ->assertPresent( $addToChart )
                 ->assertVisible( $addToChart )
-                ->press( $addToChart );
+                ->press( $addToChart )
+                ->pause($testPause);
 
                 // prepare CSV file
                 $CSVfilename = $strategyName.'.csv';
@@ -221,12 +242,12 @@ class ExampleTest extends DuskTestCase
                     ->assertPresent( $coinList )
                     ->assertVisible( $coinList )
                     ->press( $coinList )
-
+                    ->pause($testPause)
                     ->waitFor( $exchangeButton )
                     ->assertPresent( $exchangeButton )
                     ->assertVisible( $exchangeButton )
                     ->press( $exchangeButton )
-
+                    ->pause($testPause)
                     ->waitFor( $exchangeInput )
                     ->assertPresent( $exchangeInput )
                     ->assertVisible( $exchangeInput )
@@ -235,6 +256,7 @@ class ExampleTest extends DuskTestCase
                     ->assertPresent( $exchangeName )
                     ->assertVisible( $exchangeName )
                     ->press( $exchangeName )
+                    ->pause($testPause)
                 
                     // choose coin
                     ->assertPresent( $coinInput )
@@ -257,14 +279,17 @@ class ExampleTest extends DuskTestCase
                         ->assertPresent( $chartSettings )
                         ->assertVisible( $chartSettings )
                         ->press( $chartSettings )
+                        ->pause($testPause)
                         ->waitFor( $inputsTab )
                         ->assertPresent( $inputsTab )
                         ->assertVisible( $inputsTab )
                         ->press( $inputsTab )
+                        ->pause($testPause)
                         ->waitFor( $selectArrow )
                         ->assertPresent( $selectArrow )
                         ->assertVisible( $selectArrow )
                         ->press( $selectArrow )
+                        ->pause($testPause)
                         ->waitFor( $dateRange[0] )
                         ->assertPresent( $dateRange[0] )
                         ->assertVisible( $dateRange[0] )
@@ -284,6 +309,7 @@ class ExampleTest extends DuskTestCase
                             ->assertPresent( $intervalMenu )
                             ->assertVisible( $intervalMenu )
                             ->press( $intervalMenu )
+                            ->pause($testPause)
                             ->waitFor( $interval[0] )
                             ->assertPresent( $interval[0] )
                             ->assertVisible( $interval[0] )
