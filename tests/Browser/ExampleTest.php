@@ -173,29 +173,25 @@ class ExampleTest extends DuskTestCase
                 ->assertPresent( $cookieButton )
                 ->assertVisible( $cookieButton )
                 ->press( $cookieButton )
+                ->pause($testPause)
 
                 // clear chart
                 ->pause(1500)
                 ->press( $arrowOption )
+                ->pause($testPause)
                 ->waitFor( $removeAll )
                 ->assertPresent( $removeAll )
                 ->assertVisible( $removeAll )
                 ->press( $removeAll )
+                ->pause($testPause)
                 ->pause(1500)
 
                 // add strategy
-
-
-                /*->pause(1000)
                 ->waitFor( $pineScriptTab )
                 ->assertPresent( $pineScriptTab )
                 ->assertVisible( $pineScriptTab )
-                ->press( $pineScriptTab )*/
-
-
-
-
-
+                ->press( $pineScriptTab )
+                ->pause($testPause)
                 ->waitFor( $openScriptMenu )
                 ->assertPresent( $openScriptMenu )
                 ->assertVisible( $openScriptMenu )
@@ -269,6 +265,7 @@ class ExampleTest extends DuskTestCase
                     ->assertPresent( $coinOption )
                     ->assertVisible( $coinOption )
                     ->press( $coinOption )
+                    ->pause($testPause)
                     ->pause(1500);
 
                     // loop through date ranges
@@ -294,11 +291,13 @@ class ExampleTest extends DuskTestCase
                         ->assertPresent( $dateRange[0] )
                         ->assertVisible( $dateRange[0] )
                         ->press( $dateRange[0] )
+                        ->pause($testPause)
                         ->pause(500)
                         ->waitFor( $okButton )
                         ->assertPresent( $okButton )
                         ->assertVisible( $okButton )
                         ->press( $okButton )
+                        ->pause($testPause)
                         ->pause(500);
 
                         foreach ($intervals as $interval) { $browser
