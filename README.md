@@ -9,6 +9,7 @@
 - set TV_PASSWORD in .ENV file (this is your TradingView password, e.g. TV_PASSWORD=mypassword)
 - add DUSK_HEADLESS_DISABLED=true in .ENV file if you want a headless browser (runs in background as opposed to launching a browser)
 - add your Pinescript strategy into TradingView & save it (the exact name is important, take note of this for the $strategyName variable)
+- your Pinescript will need to include date range code, if you want them in your CSV
 - modify your $strategyName, $exchange, $coins, $dateRanges, $intervals variables in tests/Browser/ExampleTest.php
 
 ## How to run:
