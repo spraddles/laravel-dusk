@@ -11,6 +11,7 @@
 - add your Pinescript strategy into TradingView & save it (the exact name is important, take note of this for the $strategyName variable)
 - your Pinescript will need to include date range code, if you want them in your CSV
 - modify your $strategyName, $exchange, $coins, $dateRanges, $intervals variables in tests/Browser/ExampleTest.php
+- use the $testPause variable to diagnose for issues, key issue is Dusk runs too fast, sometimes you need to slow it down (e.g. $testPause=1500, meaning delay each action by 1.5 seconds)
 
 ## How to run:
 - open a termnial session and type in the below commands:
