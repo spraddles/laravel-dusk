@@ -56,9 +56,9 @@ class ExampleTest extends DuskTestCase
             ];
 
             // coins & exchanges
+            $exchange = 'Binance';
             $coinList = '#header-toolbar-symbol-search';
             $exchangeButton = '[data-name="symbol-search-items-dialog"] .apply-common-tooltip';
-            $exchange = 'Binance';
             $exchangeInput = '[data-outside-boundary-for="exchanges-search"] input';
             $exchangeName = '[data-outside-boundary-for="exchanges-search"] [data-name="exchanges-search"] div[class^="exchangeItemsContainer-"] div[class^="wrap-"]:first-of-type';
             $coinInput = '#overlap-manager-root [data-dialog-name="Symbol Search"] div[class^="container-"] input ';
