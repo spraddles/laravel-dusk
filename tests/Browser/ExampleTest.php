@@ -38,7 +38,7 @@ class ExampleTest extends DuskTestCase
 
             // coins
             $coins = [
-                'BTCUSD',
+                /*'BTCUSD',
                 'ETHUSD',
                 'MATICUSD',
                 'XRPUSD',
@@ -51,7 +51,7 @@ class ExampleTest extends DuskTestCase
                 'TRXUSD',
                 'DOTUSD',
                 'WAXPUSD',
-                'BCHUSD',
+                'BCHUSD',*/
                 'XTZUSD'
             ];
 
@@ -70,6 +70,7 @@ class ExampleTest extends DuskTestCase
             $removeAll = '#overlap-manager-root div[class^="menuBox-"] [data-name="remove-all"]';
 
             // pinescript
+            $bottomAreaPane = '#bottom-area';
             $pineScriptTab = '#footer-chart-panel div[class^="tabs-"] div[class^="tab-"]:nth-of-type(3)';
             $openScriptMenu = '#bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget div[class^="rightControlsBlock-"] div[data-name="open-script"]';
             $openMyScript = '#overlap-manager-root div[class^="menuBox-"] div[class^="item-"]:first-of-type';
@@ -78,6 +79,8 @@ class ExampleTest extends DuskTestCase
             $strategySelect = '#overlap-manager-root div[class^="wrapper-"] div[class^="container-"] div[class^="list-"] div[class^="itemRow-"]';
             $closeStrategySearch = 'div[data-outside-boundary-for="open-user-script-dialog"] div[class^="wrapper-"] div[class^="container-"]:first-of-type span[class^="close-"]';
             $addToChart = '#bottom-area .bottom-widgetbar-content.scripteditor.tv-script-widget #tv-script-pine-editor-header-root div[class^="content-"] div[class^="rightControlsBlock-"] div[data-name="add-script-to-chart"]';
+            $performanceSummaryTab = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.backtesting .backtesting-head-wrapper .backtesting-select-wrapper ul.report-tabs li:nth-of-type(2)';
+            $performanceSummaryActive = '.layout__area--bottom #bottom-area .bottom-widgetbar-content.backtesting .backtesting-head-wrapper .backtesting-select-wrapper ul.report-tabs li.active:nth-of-type(2)';
 
             // date ranges: the 3rd item in array is days in that period (used for trades p/day calculation)
             $dateRanges = [
@@ -86,7 +89,7 @@ class ExampleTest extends DuskTestCase
                 ['div[id$="_item_16-weeks"]', '16 weeks', 112],
                 ['div[id$="_item_8-weeks"]', '8 weeks', 56],
                 ['div[id$="_item_3-weeks"]', '3 weeks', 21]*/
-                ['div[id$="_item_Bad_period_BTC"]', 'Bad period BTC', 99]
+                ['div[id$="_item_Bad-period-BTC"]', 'Bad period BTC', 99]
             ];
 
             // chart setting
@@ -97,7 +100,7 @@ class ExampleTest extends DuskTestCase
 
             // time intervals
             $intervals = [
-                ['#overlap-manager-root [data-value="1M"]', '1 Month'],
+                /*['#overlap-manager-root [data-value="1M"]', '1 Month'],
                 ['#overlap-manager-root [data-value="1W"]', '1 Week'],
                 ['#overlap-manager-root [data-value="1D"]', '1 Day'],
                 ['#overlap-manager-root [data-value="240"]', '4 hrs'],
@@ -105,7 +108,7 @@ class ExampleTest extends DuskTestCase
                 ['#overlap-manager-root [data-value="120"]', '2 hrs'],
                 ['#overlap-manager-root [data-value="60"]', '1 hr'],
                 ['#overlap-manager-root [data-value="45"]', '45 mins'],
-                ['#overlap-manager-root [data-value="30"]', '30 mins'],
+                ['#overlap-manager-root [data-value="30"]', '30 mins'],*/
                 ['#overlap-manager-root [data-value="15"]', '15 mins'],
                 ['#overlap-manager-root [data-value="5"]', '5 mins']
             ];
@@ -127,7 +130,7 @@ class ExampleTest extends DuskTestCase
             $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio','Sharpe Ratio','Sortino Ratio');
 
             // begin Dusk process
-            $testPause = 1500; // use to slow Dusk down for diagnosing issues
+            $testPause = 0; // use to slow Dusk down for diagnosing issues
             $browser
             
                 // sign in
@@ -184,15 +187,21 @@ class ExampleTest extends DuskTestCase
                 ->assertVisible( $removeAll )
                 ->press( $removeAll )
                 ->pause($testPause)
-                ->pause(1500)
+                ->pause(1500);
 
-                // add strategy
-                ->waitFor( $pineScriptTab )
-                ->assertPresent( $pineScriptTab )
-                ->assertVisible( $pineScriptTab )
-                ->press( $pineScriptTab )
-                ->pause($testPause)
-                ->waitFor( $openScriptMenu )
+                // open pinescript tab (if its closed)
+                $bottomAreaPaneHeight = $browser->attribute( $bottomAreaPane, 'style');
+                if ($bottomAreaPaneHeight = 'height: 0px;') { $browser
+                    ->waitFor( $pineScriptTab )
+                    ->assertPresent( $pineScriptTab )
+                    ->assertVisible( $pineScriptTab )
+                    ->press( $pineScriptTab )
+                    ->pause($testPause)
+                    ->waitFor( $openScriptMenu );
+                }
+
+                // strategy
+                $browser
                 ->assertPresent( $openScriptMenu )
                 ->assertVisible( $openScriptMenu )
                 ->press( $openScriptMenu )
@@ -300,7 +309,9 @@ class ExampleTest extends DuskTestCase
                         ->pause($testPause)
                         ->pause(500);
 
-                        foreach ($intervals as $interval) { $browser
+                        $defaultPause = 0; // use for diagnosing issues
+                        
+                        foreach ($intervals as $interval) { $browser                          
 
                             // change time interval
                             ->pause(750)
@@ -313,18 +324,28 @@ class ExampleTest extends DuskTestCase
                             ->assertPresent( $interval[0] )
                             ->assertVisible( $interval[0] )
                             ->press( $interval[0] );
+
+                            // make sure 'performance summary' pane is open
+                            if (!$browser->element( $performanceSummaryActive )) { $browser
+                                ->pause(750)
+                                ->waitFor( $performanceSummaryTab )
+                                ->assertPresent( $performanceSummaryTab )
+                                ->assertVisible( $performanceSummaryTab )
+                                ->press( $performanceSummaryTab )
+                                ->pause( $defaultPause );
+                            }
                             
                             // data points
-                            $defaultPause = 2500;
+                            $browser->pause( $defaultPause );
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $netProfit )
                                 ->assertPresent( $netProfit )
                                 ->assertVisible( $netProfit );
                             $netProfitData = strstr($browser->text( $netProfit ), ' %', true );
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $buyAndHold )
                                 ->assertPresent( $buyAndHold )
                                 ->assertVisible( $buyAndHold );
@@ -333,7 +354,7 @@ class ExampleTest extends DuskTestCase
                             $difference = (int)$netProfitData - (int)$buyAndHoldData;
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $TotalTradesClosed )
                                 ->assertPresent( $TotalTradesClosed )
                                 ->assertVisible( $TotalTradesClosed );
@@ -345,49 +366,49 @@ class ExampleTest extends DuskTestCase
                             else $tradesPerDay = 0;
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $TotalTradesOpen )
                                 ->assertPresent( $TotalTradesOpen )
                                 ->assertVisible( $TotalTradesOpen );
                             $TotalTradesOpenData = $browser->text( $TotalTradesOpen );
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $winningTrades )
                                 ->assertPresent( $winningTrades )
                                 ->assertVisible( $winningTrades );
                             $winningTradesData = $browser->text( $winningTrades );
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $losingTrades )
                                 ->assertPresent( $losingTrades )
                                 ->assertVisible( $losingTrades );
                             $losingTradesData = $browser->text( $losingTrades );
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $percentProfitable )
                                 ->assertPresent( $percentProfitable )
                                 ->assertVisible( $percentProfitable );
                             $percentProfitableData = strstr($browser->text( $percentProfitable ), ' %', true );
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $winLossRatio )
                                 ->assertPresent( $winLossRatio )
                                 ->assertVisible( $winLossRatio );
                             $winLossRatioData = $browser->text( $winLossRatio );
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $sharpeRatio )
                                 ->assertPresent( $sharpeRatio )
                                 ->assertVisible( $sharpeRatio );
                             $sharpeRatioData = $browser->text( $sharpeRatio );
 
                             $browser
-                                ->pause($defaultPause)
+                                ->pause( $defaultPause )
                                 ->waitFor( $sortinoRatio )
                                 ->assertPresent( $sortinoRatio )
                                 ->assertVisible( $sortinoRatio );
