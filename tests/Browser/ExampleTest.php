@@ -4,6 +4,7 @@ namespace Tests\Browser;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Facebook\WebDriver\Chrome\ChromeOptions;
+use Facebook\WebDriver\WebDriverExpectedCondition;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 use Log;
@@ -38,7 +39,7 @@ class ExampleTest extends DuskTestCase
 
             // coins
             $coins = [
-                /*'BTCUSD',
+                'BTCUSD',
                 'ETHUSD',
                 'MATICUSD',
                 'XRPUSD',
@@ -51,7 +52,7 @@ class ExampleTest extends DuskTestCase
                 'TRXUSD',
                 'DOTUSD',
                 'WAXPUSD',
-                'BCHUSD',*/
+                'BCHUSD',
                 'XTZUSD'
             ];
 
@@ -88,7 +89,7 @@ class ExampleTest extends DuskTestCase
                 ['div[id$="_item_32-weeks"]', '32 weeks', 224],
                 ['div[id$="_item_16-weeks"]', '16 weeks', 112],
                 ['div[id$="_item_8-weeks"]', '8 weeks', 56],
-                ['div[id$="_item_3-weeks"]', '3 weeks', 21]*/
+                ['div[id$="_item_3-weeks"]', '3 weeks', 21],*/
                 ['div[id$="_item_Bad-period-BTC"]', 'Bad period BTC', 99]
             ];
 
@@ -100,7 +101,7 @@ class ExampleTest extends DuskTestCase
 
             // time intervals
             $intervals = [
-                /*['#overlap-manager-root [data-value="1M"]', '1 Month'],
+                ['#overlap-manager-root [data-value="1M"]', '1 Month'],
                 ['#overlap-manager-root [data-value="1W"]', '1 Week'],
                 ['#overlap-manager-root [data-value="1D"]', '1 Day'],
                 ['#overlap-manager-root [data-value="240"]', '4 hrs'],
@@ -108,11 +109,11 @@ class ExampleTest extends DuskTestCase
                 ['#overlap-manager-root [data-value="120"]', '2 hrs'],
                 ['#overlap-manager-root [data-value="60"]', '1 hr'],
                 ['#overlap-manager-root [data-value="45"]', '45 mins'],
-                ['#overlap-manager-root [data-value="30"]', '30 mins'],*/
+                ['#overlap-manager-root [data-value="30"]', '30 mins'],
                 ['#overlap-manager-root [data-value="15"]', '15 mins'],
                 ['#overlap-manager-root [data-value="5"]', '5 mins']
             ];
-            $intervalMenu = '#header-toolbar-intervals div[class^="menu-"]';
+            $intervalMenu = '#header-toolbar-intervals > div[class^="menu-"]';
 
             // data points
             $netProfit = '#bottom-area > div.bottom-widgetbar-content.backtesting > div.backtesting-content-wrapper > div > div > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > div:nth-child(2) > span';
@@ -129,45 +130,48 @@ class ExampleTest extends DuskTestCase
             // CSV file
             $csvHeaders = array('Coin','Exchange','Date range','Interval','Net profit','B+H','Difference','Trades p/day','Total Trades closed','Trades open','Winning trades','Losing trades','Percent profitable','Win loss ratio','Sharpe Ratio','Sortino Ratio');
 
-            // begin Dusk process
-            $testPause = 0; // use to slow Dusk down for diagnosing issues
+            // settings: use to slow Dusk down for diagnosing issues
+            $testPause = 0;
+            $waitForOverride = 10;
+
+            // begin Dusk
             $browser
             
                 // sign in
                 ->visit( $website )
-                ->waitFor( $userArea )
+                ->waitUntil( "document.querySelector('".$userArea."')", $waitForOverride)
                 ->assertPresent( $userArea )
                 ->assertVisible( $userArea )
                 ->click( $userArea )
-                ->waitFor( $signInLink )
+                ->waitUntil( "document.querySelector('".$signInLink."')", $waitForOverride)
                 ->assertPresent( $signInLink )
                 ->assertVisible( $signInLink )
                 ->press( $signInLink )
                 ->pause($testPause)
-                ->waitFor( $emailLink )
+                ->waitUntil( "document.querySelector('".$emailLink."')", $waitForOverride)
                 ->assertPresent( $emailLink )
                 ->assertVisible( $emailLink )
                 ->press( $emailLink )
                 ->pause($testPause)
-                ->waitFor( $focusUser )
+                ->waitUntil( "document.querySelector('".$focusUser."')", $waitForOverride)
                 ->assertPresent( $focusUser )
                 ->assertVisible( $focusUser )
                 ->press( $focusUser )
                 ->pause($testPause)
                 ->type( $focusUser, $username )
-                ->waitFor( $focusPassword )
+                ->waitUntil( "document.querySelector('".$focusPassword."')", $waitForOverride)
                 ->assertPresent( $focusPassword )
                 ->assertVisible( $focusPassword )
                 ->press( $focusPassword )
                 ->pause($testPause)
                 ->type( $focusPassword, $password )
-                ->waitFor( $signInButton )
+                ->waitUntil( "document.querySelector('".$signInButton."')", $waitForOverride)
                 ->assertPresent( $signInButton )
                 ->assertVisible( $signInButton )
                 ->press( $signInButton )
                 ->pause($testPause)
                 ->pause(1000)
-                ->waitFor( $chartLink )
+                ->waitUntil( "document.querySelector('".$chartLink."')", $waitForOverride)
                 ->assertPresent( $chartLink )
                 ->assertVisible( $chartLink )
                 ->press( $chartLink )
@@ -182,7 +186,7 @@ class ExampleTest extends DuskTestCase
                 ->pause(1500)
                 ->press( $arrowOption )
                 ->pause($testPause)
-                ->waitFor( $removeAll )
+                ->waitUntil( "document.querySelector('".$removeAll."')", $waitForOverride)
                 ->assertPresent( $removeAll )
                 ->assertVisible( $removeAll )
                 ->press( $removeAll )
@@ -192,12 +196,12 @@ class ExampleTest extends DuskTestCase
                 // open pinescript tab (if its closed)
                 $bottomAreaPaneHeight = $browser->attribute( $bottomAreaPane, 'style');
                 if ($bottomAreaPaneHeight = 'height: 0px;') { $browser
-                    ->waitFor( $pineScriptTab )
+                    ->waitUntil( "document.querySelector('".$pineScriptTab."')", $waitForOverride)
                     ->assertPresent( $pineScriptTab )
                     ->assertVisible( $pineScriptTab )
                     ->press( $pineScriptTab )
                     ->pause($testPause)
-                    ->waitFor( $openScriptMenu );
+                    ->waitUntil( "document.querySelector('".$openScriptMenu."')", $waitForOverride);
                 }
 
                 // strategy
@@ -206,26 +210,26 @@ class ExampleTest extends DuskTestCase
                 ->assertVisible( $openScriptMenu )
                 ->press( $openScriptMenu )
                 ->pause($testPause)
-                ->waitFor( $openMyScript )
+                ->waitUntil( "document.querySelector('".$openMyScript."')", $waitForOverride)
                 ->assertPresent( $openMyScript )
                 ->assertVisible( $openMyScript )
                 ->press( $openMyScript )
                 ->pause($testPause)
-                ->waitFor( $strategySearchInput )
+                ->waitUntil( "document.querySelector('".$strategySearchInput."')", $waitForOverride)
                 ->assertPresent( $strategySearchInput )
                 ->assertVisible( $strategySearchInput )
                 ->type( $strategySearchInput, $strategyName )
-                ->waitFor( $strategySelect )
+                ->waitUntil( "document.querySelector('".$strategySelect."')", $waitForOverride)
                 ->assertPresent( $strategySelect )
                 ->assertVisible( $strategySelect )
                 ->press( $strategySelect )
                 ->pause($testPause)
-                ->waitFor( $closeStrategySearch )
+                ->waitUntil( "document.querySelector('".$closeStrategySearch."')", $waitForOverride)
                 ->assertPresent( $closeStrategySearch )
                 ->assertVisible( $closeStrategySearch )
                 ->press( $closeStrategySearch )
                 ->pause($testPause)
-                ->waitFor( $addToChart )
+                ->waitUntil( "document.querySelector('".$addToChart."')", $waitForOverride)
                 ->assertPresent( $addToChart )
                 ->assertVisible( $addToChart )
                 ->press( $addToChart )
@@ -243,21 +247,21 @@ class ExampleTest extends DuskTestCase
                 foreach ($coins as $coin) { $browser
 
                     // choose exchange
-                    ->waitFor( $coinList )
+                    ->waitUntil( "document.querySelector('".$coinList."')", $waitForOverride)
                     ->assertPresent( $coinList )
                     ->assertVisible( $coinList )
                     ->press( $coinList )
                     ->pause($testPause)
-                    ->waitFor( $exchangeButton )
+                    ->waitUntil( "document.querySelector('".$exchangeButton."')", $waitForOverride)
                     ->assertPresent( $exchangeButton )
                     ->assertVisible( $exchangeButton )
                     ->press( $exchangeButton )
                     ->pause($testPause)
-                    ->waitFor( $exchangeInput )
+                    ->waitUntil( "document.querySelector('".$exchangeInput."')", $waitForOverride)
                     ->assertPresent( $exchangeInput )
                     ->assertVisible( $exchangeInput )
                     ->type( $exchangeInput, $exchange )
-                    ->waitFor( $exchangeName )
+                    ->waitUntil( "document.querySelector('".$exchangeName."')", $waitForOverride)
                     ->assertPresent( $exchangeName )
                     ->assertVisible( $exchangeName )
                     ->press( $exchangeName )
@@ -270,7 +274,7 @@ class ExampleTest extends DuskTestCase
                     ->pause(1000)
                     ->type( $coinInput, $coin )
                     ->pause(1000)
-                    ->waitFor( $coinOption )
+                    ->waitUntil( "document.querySelector('".$coinOption."')", $waitForOverride)
                     ->assertPresent( $coinOption )
                     ->assertVisible( $coinOption )
                     ->press( $coinOption )
@@ -281,46 +285,46 @@ class ExampleTest extends DuskTestCase
                     foreach ($dateRanges as $dateRange) { $browser
 
                         // change date range
-                        ->waitFor( $chartSettings )
+                        ->waitUntil( "document.querySelector('".$chartSettings."')", $waitForOverride)
                         ->assertPresent( $chartSettings )
                         ->assertVisible( $chartSettings )
                         ->press( $chartSettings )
                         ->pause($testPause)
-                        ->waitFor( $inputsTab )
+                        ->waitUntil( "document.querySelector('".$inputsTab."')", $waitForOverride)
                         ->assertPresent( $inputsTab )
                         ->assertVisible( $inputsTab )
                         ->press( $inputsTab )
                         ->pause($testPause)
-                        ->waitFor( $selectArrow )
+                        ->waitUntil( "document.querySelector('".$selectArrow."')", $waitForOverride)
                         ->assertPresent( $selectArrow )
                         ->assertVisible( $selectArrow )
                         ->press( $selectArrow )
                         ->pause($testPause)
-                        ->waitFor( $dateRange[0] )
+                        ->waitUntil( "document.querySelector('".$dateRange[0]."')", $waitForOverride)
                         ->assertPresent( $dateRange[0] )
                         ->assertVisible( $dateRange[0] )
                         ->press( $dateRange[0] )
                         ->pause($testPause)
                         ->pause(500)
-                        ->waitFor( $okButton )
+                        ->waitUntil( "document.querySelector('".$okButton."')", $waitForOverride)
                         ->assertPresent( $okButton )
                         ->assertVisible( $okButton )
                         ->press( $okButton )
                         ->pause($testPause)
                         ->pause(500);
 
-                        $defaultPause = 0; // use for diagnosing issues
+                        $defaultPause = 3000;
                         
-                        foreach ($intervals as $interval) { $browser                          
-
+                        foreach ($intervals as $interval) { $browser   
+                            
                             // change time interval
                             ->pause(750)
-                            ->waitFor( $intervalMenu )
+                            ->waitUntil( "document.querySelector('".$intervalMenu."')", $waitForOverride)
                             ->assertPresent( $intervalMenu )
                             ->assertVisible( $intervalMenu )
                             ->press( $intervalMenu )
                             ->pause($testPause)
-                            ->waitFor( $interval[0] )
+                            ->waitUntil( "document.querySelector('".$interval[0]."')", $waitForOverride)
                             ->assertPresent( $interval[0] )
                             ->assertVisible( $interval[0] )
                             ->press( $interval[0] );
@@ -328,7 +332,7 @@ class ExampleTest extends DuskTestCase
                             // make sure 'performance summary' pane is open
                             if (!$browser->element( $performanceSummaryActive )) { $browser
                                 ->pause(750)
-                                ->waitFor( $performanceSummaryTab )
+                                ->waitUntil( "document.querySelector('".$performanceSummaryTab."')", $waitForOverride)
                                 ->assertPresent( $performanceSummaryTab )
                                 ->assertVisible( $performanceSummaryTab )
                                 ->press( $performanceSummaryTab )
@@ -336,17 +340,16 @@ class ExampleTest extends DuskTestCase
                             }
                             
                             // data points
-                            $browser->pause( $defaultPause );
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $netProfit )
+                                ->waitUntil( "document.querySelector('".$netProfit."')", $waitForOverride)
                                 ->assertPresent( $netProfit )
                                 ->assertVisible( $netProfit );
                             $netProfitData = strstr($browser->text( $netProfit ), ' %', true );
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $buyAndHold )
+                                ->waitUntil( "document.querySelector('".$buyAndHold."')", $waitForOverride)
                                 ->assertPresent( $buyAndHold )
                                 ->assertVisible( $buyAndHold );
                             $buyAndHoldData = strstr($browser->text( $buyAndHold ), ' %', true );
@@ -355,7 +358,7 @@ class ExampleTest extends DuskTestCase
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $TotalTradesClosed )
+                                ->waitUntil( "document.querySelector('".$TotalTradesClosed."')", $waitForOverride)
                                 ->assertPresent( $TotalTradesClosed )
                                 ->assertVisible( $TotalTradesClosed );
                             $TotalTradesClosedData = $browser->text( $TotalTradesClosed );
@@ -367,49 +370,49 @@ class ExampleTest extends DuskTestCase
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $TotalTradesOpen )
+                                ->waitUntil( "document.querySelector('".$TotalTradesOpen."')", $waitForOverride)
                                 ->assertPresent( $TotalTradesOpen )
                                 ->assertVisible( $TotalTradesOpen );
                             $TotalTradesOpenData = $browser->text( $TotalTradesOpen );
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $winningTrades )
+                                ->waitUntil( "document.querySelector('".$winningTrades."')", $waitForOverride)
                                 ->assertPresent( $winningTrades )
                                 ->assertVisible( $winningTrades );
                             $winningTradesData = $browser->text( $winningTrades );
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $losingTrades )
+                                ->waitUntil( "document.querySelector('".$losingTrades."')", $waitForOverride)
                                 ->assertPresent( $losingTrades )
                                 ->assertVisible( $losingTrades );
                             $losingTradesData = $browser->text( $losingTrades );
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $percentProfitable )
+                                ->waitUntil( "document.querySelector('".$percentProfitable."')", $waitForOverride)
                                 ->assertPresent( $percentProfitable )
                                 ->assertVisible( $percentProfitable );
                             $percentProfitableData = strstr($browser->text( $percentProfitable ), ' %', true );
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $winLossRatio )
+                                ->waitUntil( "document.querySelector('".$winLossRatio."')", $waitForOverride)
                                 ->assertPresent( $winLossRatio )
                                 ->assertVisible( $winLossRatio );
                             $winLossRatioData = $browser->text( $winLossRatio );
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $sharpeRatio )
+                                ->waitUntil( "document.querySelector('".$sharpeRatio."')", $waitForOverride)
                                 ->assertPresent( $sharpeRatio )
                                 ->assertVisible( $sharpeRatio );
                             $sharpeRatioData = $browser->text( $sharpeRatio );
 
                             $browser
                                 ->pause( $defaultPause )
-                                ->waitFor( $sortinoRatio )
+                                ->waitUntil( "document.querySelector('".$sortinoRatio."')", $waitForOverride)
                                 ->assertPresent( $sortinoRatio )
                                 ->assertVisible( $sortinoRatio );
                             $sortinoRatioData = $browser->text( $sortinoRatio );
